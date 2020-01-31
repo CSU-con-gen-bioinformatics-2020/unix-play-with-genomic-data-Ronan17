@@ -67,7 +67,6 @@ echo "my name is Ronan"
 # print the absolute path of the top level of the homework directory where this is
 
 ```{bash}
-cd ~/OneDrive/Documents/M2/Stage/Cours US/Cours Eric/unix-play-with-genomic-data-Ronan17
 pwd
 ```
 
@@ -100,7 +99,7 @@ drwxr-xr-x 1 acer 197121      0 Jan 29 07:15 .git
 # List (long format) the contents of the directory `.git`
 
 ```{bash}
-ls -l \.git
+ls -l .git
 ```
 
 # if you wanted to type `ls fastq/DPCh_plate1_A06_S6.R1.fq.gz` on the command line, what is the fewest keystrokes that can get you `fastq/DPCh_plate1_A06_S6.R1.fq.gz` using TAB completion?
@@ -108,9 +107,15 @@ ls -l \.git
 I did it in 10 (counting TABs)...
 
 ```
+cd fastq/
+cd fastq/DPCh_plate1_
+cd fastq/DPCh_plate1_A
+cd fastq/DPCh_plate1_A0
+cd fastq/DPCh_plate1_A06
+cd fastq/DPCh_plate1_A06_S6.R
 fastq/DPCh_plate1_A06_S6.R1
+cd fastq/DPCh_plate1_A06_S6.R1.fq.gz
 ```
-Since there is a DPCh_plate1_A06_S6.R2.
 
 # make a new directory called `lonely-fastqs`, and inside of that, two directories R1 and R2
 
@@ -153,12 +158,14 @@ directories are there, it's all good...
 
 ```{bash}
 cp fastq/*plate1_[AB]* fq_AB
+ls fq_AB
 ```
 
 # Now, using negation (`^`) with `[` and `]` copy all the R1 files that don't belong to sample names starting with an `A` or a `B` to `fq_notAB`. When you are done, on the next line in the code block, list the contents of `fq_AB` and `fq_notAB`. 
 
 ```{bash}
 cp fastq/*plate1_[^AB]* fq_notAB
+ls fq_notAB
 ```
 
 # Remove `fq_AB` and `fq_notAB`, and their contents
@@ -171,6 +178,7 @@ rm -r fq_AB fq_notAB
 
 ```{bash}
 mkdir dir_{A,C,E,G,I}
+ls dir_*
 ```
 
 # Using globbing, remove `dir_A`, `dir_C`, `dir_E`, `dir_G`, and `dir_I`, using a command with 8 characters (including spaces)
@@ -208,8 +216,7 @@ cat bad\ directory\ name\ with\ spaces/bad\ file\ name\ with\ spaces
 # list the directories (just the names, not the contents (`-d`)) `bad directory name with spaces` and `nice_dir_name`.
 
 ```{bash}
-ls -d 'nice_dir_name'
-ls -d bad\ directory\ name\ with\ spaces
+ls -d 'nice_dir_name' bad\ directory\ name\ with\ spaces
 
 ```
 
@@ -255,7 +262,7 @@ ls -a it_aint_here
 # Now, do the same thing but redirect _stderr_ into a file called `my_bad.txt`, and then catenate the contents of that file, and then remove it
 
 ```{bash}
-ls -a it_aint_here > my_bad.txt
+ls -a it_aint_here 2> my_bad.txt
 cat my_bad.txt
 rm my_bad.txt
 ```
@@ -275,7 +282,7 @@ zcat fastq/DPCh_plate1_C11_S35.R2.fq.gz | head -n 8
 # What do you notice about the names of the two reads in each file (Lines 1 and 5, that start with a `@`)
 
 ```
-They have almost the same description, the only changes are the two numbers before the "/2".
+They have almost the same description, the only change is the two numbers before the "/2 or /1". And they are actually file for Read 1 and Read 2, that's why the description of each line is almost indentical between those two file.
 ```
 
 
@@ -298,7 +305,7 @@ wc sam/DPCh_plate1_A0*
 ```{bash}
 zcat fastq/*R1* > new.txt
 wc new.txt
-wc fastq/*R1*
+cat fastq/*R1* | wc
 rm new.txt
 ```
 
@@ -370,7 +377,7 @@ du -h bam sam
 # Print the last 15 lines of `sam/DPCh_plate1_A05_S5.sam` to _stdout_
 
 ```{bash}
-cat sam/DPCh_plate1_A05_S5.sam | head -n  15
+cat sam/DPCh_plate1_A05_S5.sam | tail -n  15
 ```
 
 If it all looks like gibberish to you, despair not!  You will be super familiar with
@@ -406,7 +413,7 @@ chmod 664 count_files.sh
 ls -l
 ```
 
-Sorry I forgot to put the ls -l at the end, so the change was already made.
+Chmod doesn't work on windows.
 
 
 # Use chmod to change permissions of the files in the `silly` directory to match their names. For example for the first one you would use: `chmod 770 FILE-rwxrwx---`.  Use the octal specifiers to `chmod`. Do this for all 5 files (one chmod command for each), and at the end do `ls -l silly` to verify they are correct.
@@ -415,7 +422,17 @@ Sorry I forgot to put the ls -l at the end, so the change was already made.
 chmod 775 DIRdrwxrwxr-x/
 chmod 640 'FILE-rw-r-----'
 chmod 664 'FILE-rw-rw-r--'
-chmod 650 'FILE-rwxr-----'
-chmod 675 'FILE-rwxrwxr--'
+chmod 740 'FILE-rwxr-----'
+chmod 774 'FILE-rwxrwxr--'
 ls -l silly
+```
+
+```{r}
+library(tidyverse)
+sammy <- read_tsv("sam/DPCh_plate1_A05_S5.sam",comment = "@", col_names = FALSE)
+```
+
+```{r}
+sammy
+problems(sammy)
 ```
